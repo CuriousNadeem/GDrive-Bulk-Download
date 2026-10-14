@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drive to one ZIP</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header>
+    <h1>Drive to one ZIP</h1>
+    <p>Paste Google Drive file or folder links. Everything is downloaded, kept in its folder structure, and packed into a single ZIP with no 2 GB splits.</p>
+  </header>
+
+  <section id="keySetup" hidden>
+    <label for="apiKey">One-time setup: add a Google API key</label>
+    <p class="hint first">Google requires a free key to read shared folders. It stays on this computer.</p>
+    <ol class="steps">
+      <li>Open <a href="https://console.cloud.google.com/projectcreate" target="_blank" rel="noopener">Google Cloud</a>, create a project, then enable <strong>Google Drive API</strong> under APIs &amp; Services → Library.</li>
+      <li>Under APIs &amp; Services → <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Credentials</a>, choose <strong>Create credentials → API key</strong>.</li>
+      <li>Paste the key here.</li>
+    </ol>
+    <div class="row"><input id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="AIza…"><button id="saveKey" class="primary">Save key</button></div>
+    <p id="keyError" class="error" role="alert" hidden></p>
+  </section>
+
+  <section id="setup">
+    <label for="links">Drive links (one per line)</label>
+    <textarea id="links" rows="5" spellcheck="false" placeholder="https://drive.google.com/drive/folders/…&#10;https://drive.google.com/file/d/…/view"></textarea>
+    <div class="row">
+      <button id="start" class="primary">Create ZIP</button>
+      <span id="auth"></span>
+    </div>
+    <p id="formError" class="error" role="alert" hidden></p>
+    <p class="hint">Public links work without signing in. Sign in only for private files or folders; your Google credentials stay on the server and are never sent to this page.</p>
+  </section>
+
+  <section id="job" hidden aria-live="polite">
+    <div class="phase"><strong id="phase">Starting…</strong><button id="cancel" class="link">Cancel</button></div>
+
+    <div class="lane">
+      <div class="lane-head"><span>Downloaded from Drive</span><span id="dlText"></span></div>
+      <div class="bar"><i id="dlBar"></i></div>
+    </div>
+    <div class="lane">
+      <div class="lane-head"><span>ZIP written to disk</span><span id="zipText"></span></div>
+      <div class="bar"><i id="zipBar" class="alt"></i></div>
+    </div>
+
+    <dl class="stats">
+      <div><dt>Files</dt><dd id="files">0 / 0</dd></div>
+      <div><dt>Speed</dt><dd id="speed">–</dd></div>
+      <div><dt>Time left</dt><dd id="eta">–</dd></div>
+      <div><dt>Problems</dt><dd id="errCount">0</dd></div>
+    </dl>
+    <p class="current" id="current"></p>
+
+    <div id="ready" hidden>
+      <a id="dlLink" class="button primary" download>Download ZIP</a>
+      <button id="copy" class="secondary">Copy link for download manager</button>
+      <p class="hint">Paste the copied link into Free Download Manager (<em>Add URL</em>), or let its browser extension catch the download. The link supports pause and resume. Files stay available until <span id="expires"></span>, then are deleted.</p>
+    </div>
+
+    <details id="errBox" hidden>
+      <summary>Files that could not be downloaded</summary>
+      <ul id="errList"></ul>
+      <p class="hint">These are also listed in <code>_ERRORS.txt</code> inside the ZIP.</p>
+    </details>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
